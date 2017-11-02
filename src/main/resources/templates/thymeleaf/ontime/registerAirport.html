@@ -1,0 +1,77 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+	<div class="panel-heading">Register Page</div>
+	<div class="panel-body">
+
+		<form th:action="@{registerAirport}" method="post">
+
+			<div name="AirportDB">
+				<div name="ontimeRegisterTable">
+					<table>
+						<tr>
+							<th><label>공항 국제 코드</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="iata" th:value="${airport.iata}" />
+								</div>
+							</td>
+							<th><label>공항 이름</label></th>
+							<td>
+								<div class="form-group">
+									<textarea class="form-control" rows="3" name='airport'
+										th:text="${airport.airport}"></textarea>
+								</div>
+							</td>
+							<th><label>도시</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="city" th:value="${airport.city}" />
+								</div>
+							</td>
+							<th><label>주 이름</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="state" th:value="${airport.state}" />
+								</div>
+							</td>
+							<th><label>국가</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="country" th:value="${airport.country}" />
+								</div>
+							</td>
+							<th><label>위도</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="lat" th:value="${airport.lat}" />
+								</div>
+							</td>
+							<th><label>경도</label></th>
+							<td>
+								<div class="form-group">
+									<input class="form-control" name="lng" th:value="${airport.lng}" />
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<button type="submit" class="btn btn-default">Submit Button</button>
+				<button type="reset" class="btn btn-primary">Reset Button</button>
+		</form>
+
+	</div>
+
+</div>
+<!--  end fragment -->
+
+<th:block layout:fragment="script">
+
+	<script th:inline="javascript">
+		
+	</script>
+
+</th:block>

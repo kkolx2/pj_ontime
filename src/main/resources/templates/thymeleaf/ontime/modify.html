@@ -1,0 +1,101 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+	<div class="panel-heading">View Page</div>
+	<div class="panel-body">
+
+	<form id='f1'>
+
+		<div class="form-group">
+			<label>번호</label> <input class="form-control" name="ono"
+				th:value="${ontime.ono}" readonly="readonly" />
+		</div>
+
+		<div class="form-group">
+			<label>출발지</label> <input class="form-control" name="origin"
+				th:value="${ontime.origin}" readonly="readonly" />
+			<p class="help-block">Title text here.</p>
+		</div>
+
+		<div class="form-group">
+			<label>목적지</label>
+			<textarea class="form-control" rows="3" name='dest'
+				th:text="${ontime.dest}" ></textarea>
+		</div>
+
+		<div class="form-group">
+			<label>거리</label> <input class="form-control" name="distance"
+				th:value="${ontime.distance}"  />
+		</div>
+
+		<div class="form-group">
+			<label>항공사코드</label> <input class="form-control" name="ucarrier"
+				th:value="${ontime.ucarrier}"
+				readonly="readonly" />
+		</div>
+		
+		<div class="form-group">
+			<label>항공기번호</label> <input class="form-control" name="fnum"
+				th:value="${ontime.fnum}"
+				readonly="readonly" />
+		</div>
+		<input type='hidden' name="page" th:value="${pageVO.page}">
+		<input type='hidden' name="size" th:value="${pageVO.size}">
+		<input type='hidden' name="type" th:value="${pageVO.type}">
+		<input type='hidden' name="keyword" th:value="${pageVO.keyword}">
+
+
+	</form>
+	
+	<div class="pull-right">
+		
+		  <a href="#" class="btn btn-warning modbtn">Modify</a>
+		
+		  <a href="#" class="btn btn-danger delbtn">Delete</a>
+
+			<a th:href="@{ list(page=${pageVO.page}, 
+			                size=${pageVO.size}, 
+			                type=${pageVO.type}, 
+			                keyword=${pageVO.keyword},
+			                ono = ${ontime.ono}
+			             )}" class="btn btn-primary">Cancel & Go List</a> 
+		</div>
+
+	</div>
+
+</div>
+<!--  end fragment -->
+
+<th:block layout:fragment="script">
+
+	<script th:inline="javascript">
+	$(document).ready(function(){
+		
+		var formObj = $("#f1");
+		
+		$(".delbtn").click(function(){
+			
+			formObj.attr("action","delete");
+			formObj.attr("method", "post");
+			
+			formObj.submit();
+			
+		});
+		
+		$(".modbtn").click(function(){
+			
+			formObj.attr("action","modify");
+			formObj.attr("method", "post");
+			
+			formObj.submit();
+			
+		});
+		
+		
+	});	
+	</script>
+
+</th:block>

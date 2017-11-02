@@ -1,0 +1,81 @@
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{layout/layout}">
+
+<div layout:fragment="content">
+
+	<div class="panel-heading">Register Page</div>
+	<div class="panel-body">
+
+		<form th:action="@{registerOntime}" method="post">
+
+			<div name="OntimeDB">
+				<div name="ontimeRegisterTable">
+					<table>
+						<tr>
+							<th><label>출발지</label></th>
+							<td>
+								<div class="form-group">
+									<select class="selectBox" id="origin" name="origin"
+										th:value="${ontime.origin}" required="required">
+										<th:block th:each="a:${airports}">
+											<option th:value="${a.iata}">[[${a.iata}]]</option>
+										</th:block>
+									</select>
+								</div>
+							</td>
+							<th><label>목적지</label></th>
+							<td>
+								<div class="form-group">
+									<select class="selectBox" id="dest" name="dest"
+										th:value="${ontime.dest}" required="required">
+										<th:block th:each="a:${airports}">
+											<option th:value="${a.iata}">[[${a.iata}]]</option>
+										</th:block>
+									</select>
+								</div>
+							</td>
+							<th><label>거리</label></th>
+							<td>
+								<div class="form-group">
+									<input name="distance" th:value="${ontime.distance}"
+										required="required" />
+								</div>
+							</td>
+							<th><label>항공사 코드</label></th>
+							<td>
+								<div class="form-group">
+									<select class="selectBox" id="ucarrier" name="ucarrier"
+										th:value="${ontime.ucarrier}" required="required">
+										<th:block th:each="c:${carriers}">
+											<option th:value="${c.code}">[[${c.code}]]</option>
+										</th:block>
+									</select>
+								</div>
+							</td>
+							<th><label>항공기 번호</label></th>
+							<td>
+								<div class="form-group">
+									<input name="fnum" th:value="${ontime.fnum}"
+										required="required" />
+								</div>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<button type="submit" class="btn btn-default">Submit Button</button>
+				<button type="reset" class="btn btn-primary">Reset Button</button>
+		</form>
+
+	</div>
+
+</div>
+<!--  end fragment -->
+
+<th:block layout:fragment="script">
+
+	<script th:inline="javascript">
+		
+	</script>
+
+</th:block>

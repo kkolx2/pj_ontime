@@ -1,0 +1,181 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorate="~{/layout/layout}">
+<head>
+<meta charset="UTF-8"></meta>
+<link rel="stylesheet" href="../css/bootstrap.css" data-th-remove="all"></link>
+<link rel="stylesheet" href="../css/animate.css" data-th-remove="all"></link>
+</head>
+<body onload="initialize()">
+	<div layout:fragment="content">
+		<div class="panel-heading">list Page</div>
+		
+		<div class="panel-body">
+		<h3>google Map test</h3>
+		
+		<div id="gmap"></div>
+		
+		<hr>
+		
+		<h1>Test Join Table</h1>
+		<br></br>
+		<hr></hr>
+		<div th:with="result=${pageMaker.result}">
+			<table class="table table-hover animated fadeIn" border="1">
+				<tr>
+					<th>선택</th>
+					<th>번호</th>
+					<th>출발지</th>
+					<th>목적지</th>
+					<th>거리</th>
+					<th>항공사코드</th>
+					<th>항공기번호</th>
+					<th>항공사명</th>
+					<th>공항명</th>
+					<th>도시</th>
+<!-- 					<th>주</th> -->
+					<th>위도</th>
+					<th>경도</th>
+
+				</tr>
+				<tr class="odd gradeX" th:each="ontime:${result.content}">
+					<td><input type="checkbox" name="box[]" value="" ></td>
+					<td>[[${ontime.ono}]]</td>
+					<td>[[${ontime.origin}]]</td>
+					<td><a th:href='${ontime.ono}' class='boardLink'>[[${ontime.dest}]]</a></td>
+					<td>[[${ontime.distance}]]</td>
+					<td>[[${ontime.ucarrier}]]</td>
+					<td>[[${ontime.fnum}]]</td>
+					<td>[[${ontime.code.description}]]</td>
+					<td>[[${ontime.iata.airport}]]</td>
+					<td>[[${ontime.iata.city}]]</td>
+<!-- 					<td>[[${ontime.iata.state}]]</td> -->
+					<td>[[${ontime.iata.lat}]]</td>
+					<td>[[${ontime.iata.lng}]]</td>
+				</tr>
+			</table>
+			<div>
+				<select id='searchType'>
+					<option>--</option>
+					<option value='or' th:selected="${pageVO.type} =='or'">출발지</option>
+					<option value='de' th:selected="${pageVO.type} =='de'">목적지</option>
+					<option value='ia' th:selected="${pageVO.type} =='ia'">공항명</option>
+					<option value='ic' th:selected="${pageVO.type} =='ic'">도시</option>
+					<option value='cd' th:selected="${pageVO.type} =='cd'">항공사</option>
+				</select> <input type='text' id='searchKeyword' th:value="${pageVO.keyword}">
+				<button id='searchBtn'>검색</button>
+			</div>
+		</div>
+		<nav>
+
+			<div>
+
+				<ul class="pagination">
+					<li class="page-item" th:if="${pageMaker.prevPage}"><a
+						th:href="${pageMaker.prevPage.pageNumber} + 1"> PREV
+							[[${pageMaker.prevPage.pageNumber} + 1]] </a></li>
+
+					<li class="page-item" th:classappend="${p.pageNumber == pageMaker.currentPageNum -1}?active: '' "	th:each="p:${pageMaker.pageList}">
+						<a th:href="${p.pageNumber} +1"> [[${p.pageNumber} +1]] </a></li>
+
+					<li class="page-item" th:if="${pageMaker.nextPage}">
+					<a th:href="${pageMaker.nextPage.pageNumber} + 1"> NEXT [[${pageMaker.nextPage.pageNumber} + 1]] </a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</div>
+
+	<form id='f1' th:action="@{list}" method="get">
+		<input type='hidden' name='page' th:value=${pageMaker.currentPageNum}>
+		<input type='hidden' name='size' th:value=${pageMaker.currentPage.pageSize}> 
+		<input type='hidden' name='type' th:value=${pageVO.type}> 
+		<input type='hidden' name='keyword' th:value=${pageVO.keyword}>
+	</form>
+
+
+</div>
+	<!--  end fragment -->
+
+	<th:block layout:fragment="script">
+
+		<script th:inline="javascript">
+	
+		$(window).load(function(){
+			
+			var msg = [[${msg}]];
+			
+			
+			if(msg =='success') {
+				alert("정상적으로 처리되었습니다.");
+				var stateObj = { msg: "" };
+			}
+
+		});
+	
+		$(document).ready(function() {
+			var formObj = $("#f1");
+
+			$(".pagination a").click(function(e) {
+
+				e.preventDefault();
+
+				formObj.find('[name="page"]').val($(this).attr('href'));
+
+				formObj.submit();
+			});
+			
+		$(".boardLink").click(function(e){
+				
+				e.preventDefault(); 
+				
+				var boardNo = $(this).attr("href");
+				
+				formObj.attr("action",[[@{'/ontime/view'}]]);
+				formObj.append("<input type='hidden' name='ono' value='" + boardNo +"'>" );
+				
+				formObj.submit();
+				
+			});
+			
+			$("#searchBtn").click(function(e){
+				
+				var typeStr = $("#searchType").find(":selected").val();
+				var keywordStr = $("#searchKeyword").val();
+				
+				console.log(typeStr, "" , keywordStr);
+				
+				formObj.find("[name='type']").val(typeStr);
+				formObj.find("[name='keyword']").val(keywordStr);
+				formObj.find("[name='page']").val("1");
+				formObj.submit();
+			});
+
+		});
+	</script>
+<!-- 	google -->
+	<script th:inline="javascript">
+		
+		 function initialize() {
+// 			 Map Center
+			 var lat 			= 37.51619821;
+			 var lng			= 127.1041016;
+			 var lat2 			= 35.21401111;
+			 var lng2			= -80.94312583;
+			 var myLatlng 	= new google.maps.LatLng(lat2, lng2); // y, x좌표값
+			 var mapOptions	= { zoom: 4, center: myLatlng, mapTypeId: google.maps.MapTypeId.ROADMAP } 
+
+// 			 marker Source
+			 var map 			= new google.maps.Map(document.getElementById('gmap'), mapOptions);
+			 var marker 		= new google.maps.Marker({ position: myLatlng, map: map,title: "회사이름" }); 
+			 var infowindow 	= new google.maps.InfoWindow({content: "<h1>회사이름</h1>", maxWidth: 300}); 
+
+			 google.maps.event.addListener(marker, 'click', function() { 
+			 infowindow.open(map, marker); 
+			  }); 
+	}
+	</script>
+
+	</th:block>
+	

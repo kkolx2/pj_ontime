@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>listemp.html</title>
+<!--/*/  
+<link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.css">
+<link rel="stylesheet" href="/webjars/animate.css/3.5.2/animate.css">
+/*/-->
+<link rel="stylesheet" href="../css/bootstrap.css" data-th-remove="all">
+<link rel="stylesheet" href="../css/animate.css" data-th-remove="all">
+</head>
+<body>
+	<h1>Hello listemp! Thymeleaf !</h1>
+	<div data-th-text="${depts}"></div>
+	<br>
+	<div data-th-inline="text">[[${depts}]]</div>
+	<hr>
+	<div data-th-inline="text">
+		<ol>
+			<li>[[${depts[0].emps}]]</li>
+			<li>[[${depts[1]}]]</li>
+			<li>[[${depts[2]}]]</li>
+		</ol>
+	</div>
+	<hr>
+	<ol>
+		<li data-th-each="dept : ${depts}">
+			<h2 data-th-text="${dept.deptno}+','+${dept.dname}+','+${dept.loc}"></h2>
+			<table class="table table-hover animated fadeIn">
+				<tr>
+					<th>empno</th>
+					<th>ename</th>
+					<th>gender1</th>
+					<th>gender2</th>
+					<th>job</th>
+					<th>mgr1</th>
+					<th>mgr2</th>
+										<th>hiredate1</th>
+										<th>hiredate2</th>
+										<th>sal1</th>
+										<th>sal2</th>
+				</tr>
+				<tr data-th-each="emp : ${dept.emps}" data-th-inline="text">
+					<td>[[${emp.empno}]]</td>
+					<td>[[${emp.ename}]]</td>
+					<td>[[${emp.gender}]]</td>
+					<th:block data-th-switch="${emp.gender}">
+						<!-- 					Thymeleaf에서 인식되는 가상의 블럭] -->
+						<td data-th-case="${emp.gender.M}">남자</td>
+						<td data-th-case="${emp.gender.F}">여자</td>
+					</th:block>
+					<td>[[${emp.job}]]</td>
+					<!-- 					<td>[[${emp.mgr}]]</td> -->
+					<td>[[${emp.mgr==null?'샤샤장': emp.mgr.ename}]]</td>
+					<td data-th-if="${emp.mgr eq null}">
+					<div class="btn btn-info animated bounceInRight">싸장님</div>
+					</td>
+					<td data-th-unless="${emp.mgr eq null}">
+					<div class="btn btn-primary animated fadeInDownBig">[[${emp.mgr.ename}]]</div>
+					</td>
+					<td>[[${emp.hiredate}]]</td>
+					<td data-th-text="${#dates.format(emp.hiredate, 'yyyy/MM/dd')}"></td>
+					<td>[[${emp.sal}]]</td>
+					<td data-th-text="${#numbers.formatInteger(emp.sal,3,'COMMA')}"></td>
+				</tr>
+			</table>
+		</li>
+	</ol>
+
+
+</body>
+</html>
