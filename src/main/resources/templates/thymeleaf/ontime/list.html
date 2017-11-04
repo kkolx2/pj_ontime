@@ -22,7 +22,7 @@
 		<br></br>
 		<hr></hr>
 		<div th:with="result=${pageMaker.result}">
-			<table class="table table-hover animated fadeIn" border="1">
+			<table id="testTable" class="table table-hover animated fadeIn" border="1">
 				<tr>
 					<th>선택</th>
 					<th>번호</th>
@@ -39,8 +39,9 @@
 					<th>경도</th>
 
 				</tr>
-				<tr class="odd gradeX" th:each="ontime:${result.content}">
-					<td><input type="checkbox" name="box[]" value="" ></td>
+				<tr id='ontimeRow' class="odd gradeX" th:each="ontime:${result.content}">
+					<td><input onload="initMap()" class="radioButton" name="ra" type="radio" 
+					th:value="${ontime.iata.lat}+','+${ontime.iata.lng}+','+${ontime.iata.airport}"></td>
 					<td>[[${ontime.ono}]]</td>
 					<td>[[${ontime.origin}]]</td>
 					<td><a th:href='${ontime.ono}' class='boardLink'>[[${ontime.dest}]]</a></td>
@@ -51,8 +52,9 @@
 					<td>[[${ontime.iata.airport}]]</td>
 					<td>[[${ontime.iata.city}]]</td>
 <!-- 					<td>[[${ontime.iata.state}]]</td> -->
-					<td>[[${ontime.iata.lat}]]</td>
-					<td>[[${ontime.iata.lng}]]</td>
+					<td name="lat" th:value="${ontime.iata.lat}">[[${ontime.iata.lat}]]</td>
+					<td name="lng" th:value="${ontime.iata.lng}">[[${ontime.iata.lng}]]</td>
+					
 				</tr>
 			</table>
 			<div>
@@ -154,13 +156,54 @@
 
 		});
 	</script>
+	<script th:inline="javascript">
+
+	var lat;
+	var lng;
+	var airport;
+	var originLat = 35.21401111;
+	var originLng = -80.94312583;
+	var flag=false;
+	$(".radioButton").click(function(e){
+		   var radioData = $(":radio[name=ra]:checked").val();
+		   var radioValue = radioData.split(","); 
+		   console.log(radioData);
+		   lat = radioValue[0];
+		   lng = radioValue[1];
+		   airport = radioValue[2];
+		   console.log("lat = "+lat+", "+"lnt = "+lng+", "+airport);
+		   flag = true;
+	});
+    function initMap() {
+    	var map = new google.maps.Map(document.getElementById('gmap'), {
+            zoom: 2,
+            center: {originLat,originLng},
+            mapTypeId: 'terrain'
+    	});
+    
+		   
+			 if(flag){
+			        var flightPlanCoordinates = [
+			            {originLat,originLng},
+			            {lat,lng}
+			          ];
+			          var flightPath = new google.maps.Polyline({
+			            path: flightPlanCoordinates,
+			            geodesic: true,
+			            strokeColor: '#FF0000',
+			            strokeOpacity: 1.0,
+			            strokeWeight: 2
+			          });
+			          flightPath.setMap(map);
+			          flag=false;
+				 }
+		   
+    }
+	</script>
 <!-- 	google -->
 	<script th:inline="javascript">
-		
 		 function initialize() {
 // 			 Map Center
-			 var lat 			= 37.51619821;
-			 var lng			= 127.1041016;
 			 var lat2 			= 35.21401111;
 			 var lng2			= -80.94312583;
 			 var myLatlng 	= new google.maps.LatLng(lat2, lng2); // y, x좌표값
@@ -174,7 +217,10 @@
 			 google.maps.event.addListener(marker, 'click', function() { 
 			 infowindow.open(map, marker); 
 			  }); 
+
+			 
 	}
+
 	</script>
 
 	</th:block>
