@@ -52,5 +52,8 @@ public class OntimeVO {
 	@JoinColumn(name = "code")
 	private CarrierVO code;
 
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name = "oiata")
+	private OriginVO oiata;
  	
 }

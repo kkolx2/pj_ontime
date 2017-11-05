@@ -12,22 +12,26 @@
 		<div class="panel-heading">list Page</div>
 		
 		<div class="panel-body">
-		<h3>google Map test</h3>
+		<h3>출발지-목적지 노선 지도</h3>
 		
 		<div id="gmap"></div>
 		
 		<hr>
 		
-		<h1>Test Join Table</h1>
-		<br></br>
 		<hr></hr>
+		<h2>미국 항공 운항 정보 조회</h2>
+
 		<div th:with="result=${pageMaker.result}">
 			<table id="testTable" class="table table-hover animated fadeIn" border="1">
 				<tr>
 					<th>선택</th>
 					<th>번호</th>
 					<th>출발지</th>
+					<th>위도</th>
+					<th>경도</th>
 					<th>목적지</th>
+					<th>위도</th>
+					<th>경도</th>
 					<th>거리</th>
 					<th>항공사코드</th>
 					<th>항공기번호</th>
@@ -35,16 +39,19 @@
 					<th>공항명</th>
 					<th>도시</th>
 <!-- 					<th>주</th> -->
-					<th>위도</th>
-					<th>경도</th>
+
 
 				</tr>
 				<tr id='ontimeRow' class="odd gradeX" th:each="ontime:${result.content}">
 					<td><input onload="initMap()" class="radioButton" name="ra" type="radio" 
-					th:value="${ontime.iata.lat}+','+${ontime.iata.lng}+','+${ontime.iata.airport}"></td>
+					th:value="${ontime.oiata.olat}+','+${ontime.oiata.olng}+','+${ontime.iata.lat}+','+${ontime.iata.lng}+','+${ontime.iata.airport}"></td>
 					<td>[[${ontime.ono}]]</td>
 					<td>[[${ontime.origin}]]</td>
+					<td name="olat" th:value="${ontime.oiata.olat}">[[${ontime.oiata.olat}]]</td>
+					<td name="olng" th:value="${ontime.oiata.olng}">[[${ontime.oiata.olng}]]</td>
 					<td><a th:href='${ontime.ono}' class='boardLink'>[[${ontime.dest}]]</a></td>
+					<td name="dlat" th:value="${ontime.iata.lat}">[[${ontime.iata.lat}]]</td>
+					<td name="dlng" th:value="${ontime.iata.lng}">[[${ontime.iata.lng}]]</td>
 					<td>[[${ontime.distance}]]</td>
 					<td>[[${ontime.ucarrier}]]</td>
 					<td>[[${ontime.fnum}]]</td>
@@ -52,8 +59,7 @@
 					<td>[[${ontime.iata.airport}]]</td>
 					<td>[[${ontime.iata.city}]]</td>
 <!-- 					<td>[[${ontime.iata.state}]]</td> -->
-					<td name="lat" th:value="${ontime.iata.lat}">[[${ontime.iata.lat}]]</td>
-					<td name="lng" th:value="${ontime.iata.lng}">[[${ontime.iata.lng}]]</td>
+					
 					
 				</tr>
 			</table>
@@ -156,10 +162,15 @@
 
 		});
 	</script>
-	<script th:inline="javascript">
 
-	var lat;
-	var lng;
+	
+		<script th:inline="javascript">
+
+	
+	var olat;
+	var olng;
+	var dlat;
+	var dlng;
 	var airport;
 	var originLat = 35.21401111;
 	var originLng = -80.94312583;
@@ -167,52 +178,57 @@
 	$(".radioButton").click(function(e){
 		   var radioData = $(":radio[name=ra]:checked").val();
 		   var radioValue = radioData.split(","); 
-		   console.log(radioData);
-		   lat = radioValue[0];
-		   lng = radioValue[1];
-		   airport = radioValue[2];
-		   console.log("lat = "+lat+", "+"lnt = "+lng+", "+airport);
+// 		   console.log(radioData);
+		   olat = parseFloat(radioValue[0]);
+		   olng = parseFloat(radioValue[1]);
+		   dlat = parseFloat(radioValue[2]);
+		   dlng = parseFloat(radioValue[3]);
+		   airport = radioValue[4];
+		   console.log("olat = "+olat+", "+"olnt = "+olng+", "+"dlat = "+dlat+", "+"dlnt = "+dlng+airport);
 		   flag = true;
+		   console.log("flag ="+flag);
+		   aaa();
 	});
-    function initMap() {
-    	var map = new google.maps.Map(document.getElementById('gmap'), {
-            zoom: 2,
-            center: {originLat,originLng},
-            mapTypeId: 'terrain'
-    	});
-    
-		   
-			 if(flag){
-			        var flightPlanCoordinates = [
-			            {originLat,originLng},
-			            {lat,lng}
-			          ];
-			          var flightPath = new google.maps.Polyline({
-			            path: flightPlanCoordinates,
-			            geodesic: true,
-			            strokeColor: '#FF0000',
-			            strokeOpacity: 1.0,
-			            strokeWeight: 2
-			          });
-			          flightPath.setMap(map);
-			          flag=false;
-				 }
-		   
-    }
-	</script>
-<!-- 	google -->
-	<script th:inline="javascript">
+	
+	function aaa(){
+		 if(flag==true){
+// 			 console.log("aaa() start...");
+// 			console.log("if inner flag ="+flag);
+			console.log("originLat = "+originLat+", "+"originLnt = "+originLng);
+			 var myLatlng = new google.maps.LatLng(olat, olng);
+   			var map = new google.maps.Map(document.getElementById('gmap'), {
+          	zoom: 4,
+         	center: myLatlng,
+          	mapTypeId: google.maps.MapTypeId.ROADMAP
+  			});
+			 
+	       var flightPlanCoordinates = [{lat:olat,lng:olng},
+	    	   								{lat:dlat,lng:dlng}];
+	       console.log(flightPlanCoordinates);
+			var flightPath = new google.maps.Polyline({
+			                 path: flightPlanCoordinates,
+			                 geodesic: true,
+			                 strokeColor: '#FF0000',
+			                 strokeOpacity: 1.0,
+			                 strokeWeight: 2
+			                    });
+		 	flightPath.setMap(map);
+			flag=false;
+// 			console.log("if inner flag ="+flag);
+// 			console.log("aaa() end...");
+		}
+	}		   
 		 function initialize() {
 // 			 Map Center
-			 var lat2 			= 35.21401111;
-			 var lng2			= -80.94312583;
+			 var lat2 			= 37.569122; 
+			 var lng2			= 126.984566;
 			 var myLatlng 	= new google.maps.LatLng(lat2, lng2); // y, x좌표값
-			 var mapOptions	= { zoom: 4, center: myLatlng, mapTypeId: google.maps.MapTypeId.ROADMAP } 
+			 var mapOptions	= { zoom: 14, center: myLatlng, mapTypeId: google.maps.MapTypeId.ROADMAP } 
 
 // 			 marker Source
 			 var map 			= new google.maps.Map(document.getElementById('gmap'), mapOptions);
-			 var marker 		= new google.maps.Marker({ position: myLatlng, map: map,title: "회사이름" }); 
-			 var infowindow 	= new google.maps.InfoWindow({content: "<h1>회사이름</h1>", maxWidth: 300}); 
+			 var marker 		= new google.maps.Marker({ position: myLatlng, map: map,title: "나의 위치" }); 
+			 var infowindow 	= new google.maps.InfoWindow({content: "<h4>더조은아이티아카데미</h4>", maxWidth: 300}); 
 
 			 google.maps.event.addListener(marker, 'click', function() { 
 			 infowindow.open(map, marker); 

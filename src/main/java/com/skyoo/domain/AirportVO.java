@@ -32,4 +32,5 @@ public class AirportVO {
 	
 	@OneToMany(mappedBy="iata")
 	private List<OntimeVO> destA = new ArrayList<OntimeVO>();
+	
 }
